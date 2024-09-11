@@ -101,9 +101,7 @@ public class ColorSensorTesting extends LinearOpMode {
             NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
             /* Use telemetry to display feedback on the driver station. We show the red, green, and blue
-             * normalized values from the sensor (in the range of 0 to 1), as well as the equivalent
-             * HSV (hue, saturation and value) values. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
-             * for an explanation of HSV color. */
+             * normalized values from the sensor (in the range of 0 to 1), as well as the equivalent*/
 
             // Update the hsvValues array by passing it to Color.colorToHSV()
             Color.colorToHSV(colors.toColor(), hsvValues);
