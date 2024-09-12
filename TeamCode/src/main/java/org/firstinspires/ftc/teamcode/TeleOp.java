@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
@@ -10,6 +16,7 @@ public class TeleOp extends OpMode {
     private DcMotor fr;
     private DcMotor bl;
     private DcMotor br;
+    private BNO055IMU imu;
 
     @Override
     public void init() {
@@ -17,6 +24,11 @@ public class TeleOp extends OpMode {
         fr = hardwareMap.dcMotor.get("fr");
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        imu.initialize(parameters);
 
         fl.setDirection(DcMotor.Direction.FORWARD);
         fr.setDirection(DcMotor.Direction.REVERSE);
@@ -39,6 +51,11 @@ public class TeleOp extends OpMode {
         double frPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
         double blPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
         double brPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        telemetry.addData("Heading", heading); // Display the heading
+        telemetry.update();
 
         if (gamepad1.right_trigger > 0.0) {
             flPower *= 0.5;
