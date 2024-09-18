@@ -47,6 +47,7 @@ public class TeleOp extends OpMode {
         float turn = gamepad1.right_stick_x;
         float strafe = gamepad1.left_stick_x;
 
+
         double flPower = Range.clip(drive + turn - strafe, -1.0, 1.0);
         double frPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
         double blPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
@@ -75,5 +76,7 @@ public class TeleOp extends OpMode {
         fr.setPower(frPower);
         bl.setPower(blPower);
         br.setPower(brPower);
+
+        boolean light = gamepad1.right_bumper;
     }
 }

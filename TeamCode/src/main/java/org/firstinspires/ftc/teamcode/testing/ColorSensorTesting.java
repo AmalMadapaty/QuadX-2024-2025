@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -18,7 +19,7 @@ public class ColorSensorTesting extends LinearOpMode {
     NormalizedColorSensor colorSensor;
 
     View relativeLayout;
-
+    private DcMotor bl;
     @Override
     public void runOpMode() {
 
@@ -41,7 +42,8 @@ public class ColorSensorTesting extends LinearOpMode {
 
     protected void runSample(){
         // Used to multiply the rgb color values but depends on lighting conditions.
-        float gain = 2;
+        float gain = 5;
+        boolean red_blue = true;
 
         // Resets the array each loop [0] being hue, [1] being saturation, and [2] being value.
         final float[] hsvValues = new float[3];
@@ -52,6 +54,7 @@ public class ColorSensorTesting extends LinearOpMode {
 
         // Checks if the color sensor in mapped on the driver hub.
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+        bl = hardwareMap.dcMotor.get("bl");
 
         // Checks if the light on the color sensor is on, if it isn't then this turns it on.
         if (colorSensor instanceof SwitchableLight) {
@@ -94,6 +97,15 @@ public class ColorSensorTesting extends LinearOpMode {
                     }
                 }
             }
+
+            if (gamepad1.y){
+                if (red_blue){
+                    red_blue = false;
+                }
+                else{
+                    red_blue = true;
+                }
+            }
             // Resets what button was previously pressed.
             xButtonPreviouslyPressed = xButtonCurrentlyPressed;
 
@@ -115,6 +127,39 @@ public class ColorSensorTesting extends LinearOpMode {
                     .addData("Saturation", "%.3f", hsvValues[1])
                     .addData("Value", "%.3f", hsvValues[2]);
             telemetry.addData("Alpha", "%.3f", colors.alpha);
+
+            if (colors.red > 0.03 &&  colors.green > 0.04){
+                telemetry.addLine("The color is: Yellow");
+                bl.setPower(0);
+            }
+            else if(colors.blue > 0.03){
+                telemetry.addLine("The color is: Blue");
+                if (red_blue){
+                    bl.setPower(-0.1);
+                }
+                else{
+                    bl.setPower(0);
+                }
+            }
+            else if(colors.red > 0.03) {
+                telemetry.addLine("The color is: Red");
+                if (!red_blue){
+                    bl.setPower(-0.1);
+                }
+                else{
+                    bl.setPower(0);
+                }
+            }
+            else{
+                telemetry.addLine("The color is: None");
+                bl.setPower(0.1);
+            }
+            if (red_blue){
+                telemetry.addLine("Your Team is: Red Team");
+            }
+            else{
+                telemetry.addLine("Your Team is: Blue Team");
+            }
 
             telemetry.update();
 
