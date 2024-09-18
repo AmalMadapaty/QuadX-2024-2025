@@ -39,12 +39,17 @@ public class TeleOp extends OpMode {
         fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
     public void loop() {
         float drive = gamepad1.left_stick_y;
-        float turn = gamepad1.right_stick_x;
+        float turn = -gamepad1.right_stick_x;
         float strafe = gamepad1.left_stick_x;
 
 
@@ -70,6 +75,26 @@ public class TeleOp extends OpMode {
             frPower *= 0.25;
             blPower *= 0.25;
             brPower *= 0.25;
+        }
+
+        if (gamepad1.x)
+        {
+            while (heading != 0) {
+                double error = 0 - heading;
+                double turnPower = (error/180) * 0.8;
+                fl.setPower(turnPower);
+                bl.setPower(turnPower);
+                fr.setPower(-turnPower);
+                br.setPower(-turnPower);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                heading = angles.firstAngle;
+                telemetry.addData("Heading", heading); // Display the heading
+                telemetry.update();
+            }
+            fl.setPower(0);
+            bl.setPower(0);
+            fr.setPower(0);
+            br.setPower(0);
         }
 
         fl.setPower(flPower);
