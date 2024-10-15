@@ -19,7 +19,7 @@ public class MeepMeepTesting {
                 // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        /*
+
                         drive.trajectorySequenceBuilder(leftPose)
                                 .splineToConstantHeading(new Vector2d(-17, -35), Math.toRadians(0))
                                 .waitSeconds(1.5)
@@ -42,7 +42,7 @@ public class MeepMeepTesting {
                                 .lineToLinearHeading(new Pose2d(-48, -48, Math.toRadians(45)))
                                 .waitSeconds(1.5)
                                 .build()
-                         */
+                        /*
                         drive.trajectorySequenceBuilder(rightPose)
                                 .splineToConstantHeading(new Vector2d(17, -35), Math.toRadians(0))
                                 .waitSeconds(1.5)
@@ -65,6 +65,7 @@ public class MeepMeepTesting {
                                 .lineToLinearHeading(new Pose2d(48, -48, Math.toRadians(135)))
                                 .waitSeconds(1.5)
                                 .build()
+                                */
                 );
 
         // Set field image
