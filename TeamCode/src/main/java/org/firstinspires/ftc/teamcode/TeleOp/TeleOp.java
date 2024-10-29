@@ -25,6 +25,7 @@ public class TeleOp extends OpMode {
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
 
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -57,6 +58,7 @@ public class TeleOp extends OpMode {
         double frPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
         double blPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
         double brPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
+
 
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double heading = angles.firstAngle;
@@ -101,7 +103,5 @@ public class TeleOp extends OpMode {
         fr.setPower(frPower);
         bl.setPower(blPower);
         br.setPower(brPower);
-
-        boolean light = gamepad1.right_bumper;
     }
 }

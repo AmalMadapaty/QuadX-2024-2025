@@ -13,8 +13,8 @@ public class RRTeleOp extends OpMode {
     @Override
     public void init() {
         drive = new SampleMecanumDrive(hardwareMap);
-
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     @Override
@@ -28,8 +28,10 @@ public class RRTeleOp extends OpMode {
         );
         drive.update();
 
+
+
         double heading = drive.getPoseEstimate().getHeading();
-        telemetry.addData("Heading", heading);
+        telemetry.addData("Heading", Math.toDegrees(heading));
         telemetry.update();
     }
 }

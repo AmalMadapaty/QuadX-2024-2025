@@ -45,8 +45,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 1.2926802946569331736064173185764; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 10.2; // in
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 22.8; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -54,8 +54,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.01647;
-    public static double kA = 0.003;
+    public static double kV = 0.0125;
+    public static double kA = 0.0026;
     public static double kStatic = 0;
 
     /*
@@ -67,16 +67,16 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 43.27;
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 389.90004882812;
-    public static double MAX_ANG_ACCEL = Math.toRadians(60);
+    public static double MAX_ANG_VEL = 2.951341099739075;
+    public static double MAX_ANG_ACCEL = 3.141592653589793;
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
      */
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
+            RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
 
     public static double encoderTicksToInches(double ticks) {
