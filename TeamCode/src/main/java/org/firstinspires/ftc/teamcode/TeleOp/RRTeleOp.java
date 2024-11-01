@@ -5,14 +5,26 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Autos.drive.SampleMecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class RRTeleOp extends OpMode {
     private SampleMecanumDrive drive;
+    private DcMotor intake;
+    private Servo rightIntake;
+    private Servo leftIntake;
+    private Servo rightLink;
+    private Servo leftLink;
 
     @Override
     public void init() {
         drive = new SampleMecanumDrive(hardwareMap);
+        hardwareMap.dcMotor.get("fl");
+        intake = hardwareMap.dcMotor.get("intake");
+        rightIntake = hardwareMap.servo.get("rightIntake");
+        leftIntake = hardwareMap.servo.get("leftIntake");
+        rightLink = hardwareMap.servo.get("rightIntake");
+        leftLink = hardwareMap.servo.get("rightIntake");
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
@@ -27,6 +39,12 @@ public class RRTeleOp extends OpMode {
                 )
         );
         drive.update();
+
+        if (gamepad2.right_trigger != 0) {
+            intake.setPower(gamepad2.right_trigger);
+        } else {
+            intake.setPower(0);
+        }
 
 
 
