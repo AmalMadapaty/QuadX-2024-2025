@@ -16,12 +16,12 @@ public class RRRight extends LinearOpMode {
 
         Pose2d myPose = new Pose2d(35.5, -61, Math.toRadians(90));
 
-        Trajectory test = drive.trajectoryBuilder(myPose)
+        Trajectory traj1 = drive.trajectoryBuilder(myPose)
                 .forward(30)
                 .build();
         ;
         waitForStart();
         loop();
-        drive.followTrajectory(test);
+        drive.followTrajectory(traj1);
     }
 }

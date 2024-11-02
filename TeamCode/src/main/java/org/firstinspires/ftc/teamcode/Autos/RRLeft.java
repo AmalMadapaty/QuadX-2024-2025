@@ -16,14 +16,16 @@ public class RRLeft extends LinearOpMode {
 
         Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(90));
 
-        Trajectory first = drive.trajectoryBuilder(myPose)
+        drive.setPoseEstimate(myPose);
+
+        Trajectory traj1 = drive.trajectoryBuilder(myPose, false)
                 //.strafeLeft(30)
-                .forward(30)
+                .back(30)
                 //.lineToConstantHeading(new Vector2d(-35.5, -30))
                 .build();
 ;
         waitForStart();
         loop();
-        drive.followTrajectory(first);
+        drive.followTrajectory(traj1);
     }
 }
