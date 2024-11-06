@@ -1,33 +1,38 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import android.renderscript.Sampler;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOp extends OpMode {
+public class HuskyTeleOp extends OpMode {
+    /*
     private DcMotor fl;
     private DcMotor fr;
     private DcMotor bl;
     private DcMotor br;
     private Servo IntakeServoR;
 
+     */
+    HuskyLens Husk;
+
     @Override
     public void init() {
+        /*
         fl = hardwareMap.dcMotor.get("fl");
         fr = hardwareMap.dcMotor.get("fr");
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
         IntakeServoR = hardwareMap.servo.get("IntakeR");
 
-
+         */
+        Husk = hardwareMap.get(HuskyLens.class,"Husky");
+/*
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 
@@ -45,10 +50,21 @@ public class TeleOp extends OpMode {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+ */
     }
+
+    public int BlueObjectDetection(){
+        Husk.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+        HuskyLens.Block[] List = Husk.blocks();
+       return(List.length);
+    };
+
+    int Object;
 
     @Override
     public void loop() {
+        /*
         float drive = gamepad1.left_stick_y;
         float turn = -gamepad1.right_stick_x;
         float strafe = gamepad1.left_stick_x;
@@ -87,12 +103,31 @@ public class TeleOp extends OpMode {
         if(gamepad1.a){
             IntakeServoR.setPosition(0.5);
         }
-        
 
+
+         */
+
+
+           Object = BlueObjectDetection();
+
+            if (Object >= 1){
+                telemetry.addData("Vision", 1);
+            }
+
+            if (Object == 0){
+                telemetry.addData("Vision",0);
+            }
+
+
+
+        updateTelemetry(telemetry);
+/*
         fl.setPower(0.1);
         fr.setPower(0.1);
         bl.setPower(0.1);
         br.setPower(0.1);
+
+ */
 
     }
 }
