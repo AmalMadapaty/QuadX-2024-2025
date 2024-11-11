@@ -16,7 +16,7 @@ public class HuskyTeleOp extends OpMode {
     private DcMotor fr;
     private DcMotor bl;
     private DcMotor br;
-    private Servo IntakeServoR;
+    //private Servo IntakeServoR;
     HuskyLens Husk;
 
 
@@ -26,7 +26,7 @@ public class HuskyTeleOp extends OpMode {
         fr = hardwareMap.dcMotor.get("fr");
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
-        IntakeServoR = hardwareMap.servo.get("IntakeR");
+        //IntakeServoR = hardwareMap.servo.get("IntakeR");
 
 
         Husk = hardwareMap.get(HuskyLens.class,"Husky");
@@ -58,7 +58,7 @@ public class HuskyTeleOp extends OpMode {
     public int BlueObjectDetection(){
         HuskyLens.Block[] List = Husk.blocks();
        return(List.length);
-    };
+    }
 
     //This returns the X position of a detected object (only blue at the moment).
     //For usage of the values, use Posi.
@@ -110,7 +110,7 @@ public class HuskyTeleOp extends OpMode {
             blPower = 0.1;
             brPower = 0.1;
         }
-
+/*
         if (gamepad1.y){
             IntakeServoR.setPosition(0.0);
         }
@@ -118,44 +118,24 @@ public class HuskyTeleOp extends OpMode {
         if(gamepad1.a){
             IntakeServoR.setPosition(0.5);
         }
-
+*/
            Object = BlueObjectDetection();
 
             if (Object >= 1){
-                telemetry.addData("Vision", 1);
+                telemetry.addData("Vision", Object);
             }
 
             if (Object == 0){
                 telemetry.addData("Vision",0);
             }
 
-            Posi = BlueObjectOrientation() - 160;
+            Posi = BlueObjectOrientation();
             telemetry.addData("X Position",Posi);
 
             //TODO: THIS IS EXPERIMENTAL AND NEEDS TO BE TESTED/FIXED.
             //This function allows for alignment with detected objects. If there aren't any to align with, it attempts to find one.
             //NOTE - This might override all other Driver 1 functions temporarily. Whether or not this is bad or good is yet to be determined.
             if(gamepad1.b) {
-                double time;
-                if (Object == 0) {
-                    time = getRuntime();
-                    while (Object == 0) {
-                        //This makes the robot rotate in an attempt to find an object.
-                        //Should make at least a full 360 before forcefully stopping.
-                        flPower = 0.2;
-                        frPower = -0.2;
-                        blPower = 0.2;
-                        brPower = -0.2;
-
-                        //Failsafe - this prevents infinite spinning from not detecting an object.
-                        //Probably will be referred to as the "Spin Cycle"
-                        if (getRuntime() >= time + 2000){
-                            break;
-                        }
-                    }
-
-                }
-
                 if (Object == 1) {
                     //This sets the turn variable for the drive functions to an aligning and adaptive value.
                     //The 0.05 is effectively a derivative - it sets a minimum SOR (Speed Of Rotation).
@@ -163,11 +143,20 @@ public class HuskyTeleOp extends OpMode {
                     //Higher division will result in a overall slower SOR, and vice versa for Lower division.
                     //May need to set a range of appropriate values.
                     //TODO: Check if the turns are proper. They may be skewed by other values. Delete this after.
-                    while (!(Posi == 160)) {
-                        flPower = Range.clip(drive + ((Posi / 200) + 0.05) - strafe, -1.0, 1.0);
-                        frPower = Range.clip(drive - ((Posi / 200) - 0.05) + strafe, -1.0, 1.0);
-                        blPower = Range.clip(drive + ((Posi / 200) - 0.05) + strafe, -1.0, 1.0);
-                        brPower = Range.clip(drive - ((Posi / 200) + 0.05) - strafe, -1.0, 1.0);
+                    if (!(Posi == 160)) {
+                        if(Posi < 160) {
+                            flPower = Range.clip(drive + (-1*(Posi-160) / 400) - strafe, -1.0, 1.0);
+                            frPower = Range.clip(drive - (-1*(Posi-160) / 400) + strafe, -1.0, 1.0);
+                            blPower = Range.clip(drive + (-1*(Posi-160) / 400) + strafe, -1.0, 1.0);
+                            brPower = Range.clip(drive - (-1*(Posi-160) / 400) - strafe, -1.0, 1.0);
+                        }
+
+                        if(Posi > 160) {
+                            flPower = Range.clip(drive - (Posi-160 / 400) - strafe, -1.0, 1.0);
+                            frPower = Range.clip(drive + (Posi-160 / 400) + strafe, -1.0, 1.0);
+                            blPower = Range.clip(drive - (Posi-160 / 400) + strafe, -1.0, 1.0);
+                            brPower = Range.clip(drive + (Posi-160 / 400) - strafe, -1.0, 1.0);
+                        }
                     }
                 }
             }
