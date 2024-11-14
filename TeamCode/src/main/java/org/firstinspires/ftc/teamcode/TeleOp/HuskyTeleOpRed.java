@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import android.renderscript.Sampler;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
-public class HuskyTeleOp extends OpMode {
+public class HuskyTeleOpRed extends OpMode {
     private DcMotor fl;
     private DcMotor fr;
     private DcMotor bl;
@@ -31,8 +27,11 @@ public class HuskyTeleOp extends OpMode {
 
         Husk = hardwareMap.get(HuskyLens.class,"Husky");
 
+        /*
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
+         */
 
          Husk.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
@@ -55,27 +54,35 @@ public class HuskyTeleOp extends OpMode {
 
     //This checks if there is an object. If there is, return how many.
     //Mind you, this only checks for BLUE objects. TODO: DOES NOT WORK ON RED OR YELLOW YET.
-    public int BlueObjectDetection(){
-        HuskyLens.Block[] List = Husk.blocks();
-       return(List.length);
+    int Num;
+    public HuskyLens.Block RedObjectDetection(){
+        HuskyLens.Block[] BlockList = Husk.blocks(2);
+        Num = BlockList.length;
+        if (Num >= 1){
+            return(BlockList[0]);
+        } else {
+            return (null);
+        }
+
     }
 
     //This returns the X position of a detected object (only blue at the moment).
     //For usage of the values, use Posi.
-    public int BlueObjectOrientation() {
+    int Xpos;
+
+    public int RedObjectOrientation() {
         Husk.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
-        int Xpos = 0;
-        for (HuskyLens.Block b : Husk.blocks()) {
-            if (b.id == 1) {
-                Xpos = b.x;
-                break;
-            }
+        for (HuskyLens.Block b : Husk.blocks(2)) {
+                if (b.id == 2){
+                    Xpos = RedObjectDetection().x;
+                }
+
         }
         return Xpos;
     }
 
-    int Object;
-    float Posi;
+    HuskyLens.Block Object;
+    int Posi;
 
     @Override
     public void loop() {
@@ -90,78 +97,40 @@ public class HuskyTeleOp extends OpMode {
         double brPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
 
 
-        if (gamepad1.right_trigger > 0.0) {
-            flPower *= 0.5;
-            frPower *= 0.5;
-            blPower *= 0.5;
-            brPower *= 0.5;
-        }
+        Object = RedObjectDetection();
 
-        if (gamepad1.left_bumper) {
-            flPower *= 0.25;
-            frPower *= 0.25;
-            blPower *= 0.25;
-            brPower *= 0.25;
-        }
-
-        if (gamepad2.left_bumper) {
-            flPower = 0.1;
-            frPower = 0.1;
-            blPower = 0.1;
-            brPower = 0.1;
-        }
-/*
-        if (gamepad1.y){
-            IntakeServoR.setPosition(0.0);
-        }
-
-        if(gamepad1.a){
-            IntakeServoR.setPosition(0.5);
-        }
-*/
-           Object = BlueObjectDetection();
-
-            if (Object >= 1){
-                telemetry.addData("Vision", Object);
+            if (Num >= 1){
+                telemetry.addData("Vision", Num);
             }
 
-            if (Object == 0){
+            if (Num == 0){
                 telemetry.addData("Vision",0);
             }
 
-            Posi = BlueObjectOrientation();
+            Posi = RedObjectOrientation();
             telemetry.addData("X Position",Posi);
+            updateTelemetry(telemetry);
 
             //TODO: THIS IS EXPERIMENTAL AND NEEDS TO BE TESTED/FIXED.
             //This function allows for alignment with detected objects. If there aren't any to align with, it attempts to find one.
             //NOTE - This might override all other Driver 1 functions temporarily. Whether or not this is bad or good is yet to be determined.
             if(gamepad1.b) {
-                if (Object == 1) {
-                    //This sets the turn variable for the drive functions to an aligning and adaptive value.
-                    //The 0.05 is effectively a derivative - it sets a minimum SOR (Speed Of Rotation).
-                    //The division by 200 can be changed to be lower/higher.
-                    //Higher division will result in a overall slower SOR, and vice versa for Lower division.
-                    //May need to set a range of appropriate values.
-                    //TODO: Check if the turns are proper. They may be skewed by other values. Delete this after.
-                    if (!(Posi == 160)) {
-                        if(Posi < 160) {
-                            flPower = Range.clip(drive + (-1*(Posi-160) / 400) - strafe, -1.0, 1.0);
-                            frPower = Range.clip(drive - (-1*(Posi-160) / 400) + strafe, -1.0, 1.0);
-                            blPower = Range.clip(drive + (-1*(Posi-160) / 400) + strafe, -1.0, 1.0);
-                            brPower = Range.clip(drive - (-1*(Posi-160) / 400) - strafe, -1.0, 1.0);
-                        }
 
-                        if(Posi > 160) {
-                            flPower = Range.clip(drive - (Posi-160 / 400) - strafe, -1.0, 1.0);
-                            frPower = Range.clip(drive + (Posi-160 / 400) + strafe, -1.0, 1.0);
-                            blPower = Range.clip(drive - (Posi-160 / 400) + strafe, -1.0, 1.0);
-                            brPower = Range.clip(drive + (Posi-160 / 400) - strafe, -1.0, 1.0);
-                        }
-                    }
+                if (Num >= 1) {
+                    //TODO: Check if the turns are proper. They may be skewed by other values. Delete this after.
+                        double error = 160 - Posi;
+                        double rotate = error * 0.004;
+                        telemetry.addData("Posi",Posi);
+                            flPower = rotate;
+                            frPower = -rotate;
+                            blPower = rotate;
+                            brPower = -rotate;
+                        Posi = RedObjectOrientation();
                 }
             }
 
-        updateTelemetry(telemetry);
+
+        telemetry.addData("flpower",flPower);
 
         fl.setPower(flPower);
         fr.setPower(frPower);
