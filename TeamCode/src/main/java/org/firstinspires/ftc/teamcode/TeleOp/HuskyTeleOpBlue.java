@@ -73,7 +73,7 @@ public class HuskyTeleOpBlue extends OpMode {
     public int RedObjectOrientation() {
         Husk.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
         for (HuskyLens.Block b : Husk.blocks(1)) {
-                if (b.id == ){
+                if (b.id == 1){
                     Xpos = BlueObjectDetection().x;
                 }
 
