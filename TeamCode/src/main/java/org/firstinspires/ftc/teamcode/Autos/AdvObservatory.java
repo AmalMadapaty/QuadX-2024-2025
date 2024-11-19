@@ -13,29 +13,46 @@ public class AdvObservatory extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(90));
+        Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(270));
 
         drive.setPoseEstimate(myPose);
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(myPose)
-                .lineToLinearHeading(new Pose2d(-63, -37, Math.toRadians(90)))
-                .waitSeconds(2.25)
-                .lineToLinearHeading(new Pose2d(-22, -39, Math.toRadians(270.75)))
-                .waitSeconds(1.5)
-                /*.lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(42)))
-                .waitSeconds(2.25)
-                .lineToLinearHeading(new Pose2d(-14.5, -83, Math.toRadians(93)))
-                .waitSeconds(1.5)
-                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(42)))
-                .waitSeconds(2.25)
-                .lineToLinearHeading(new Pose2d(-13, -86, Math.toRadians(131)))
-                .waitSeconds(1.5)
-                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(40)))
-                .waitSeconds(2.25)*/
+                // Lines up with the trusses
+                .lineToLinearHeading(new Pose2d(-42, -37, Math.toRadians(270)))
+                // Scores the preloaded specimen
+                .waitSeconds(1)
+                // Lines up with the first sample
+                .lineToLinearHeading(new Pose2d(-5, -40, Math.toRadians(180)))
+                .turn(Math.toRadians(-108.5))
+                // Intakes the first sample
+                .waitSeconds(1)
+                // Lines up with the observatory
+                .lineToLinearHeading(new Pose2d(-3, -50, Math.toRadians(270)))
+                // Outtakes the first sample
+                .waitSeconds(1)
+                // Lines up with the second sample
+                .lineToLinearHeading(new Pose2d(7, -40, Math.toRadians(90)))
+                // Intakes the second sample
+                .waitSeconds(1)
+                // Lines up with the observatory
+                .lineToLinearHeading(new Pose2d(-3, -50, Math.toRadians(270)))
+                // Outtakes the second sample
+                .waitSeconds(1)
+                // Lines up with the third sample
+                .lineToLinearHeading(new Pose2d(10, -40, Math.toRadians(72)))
+                // Intakes the third sample
+                .waitSeconds(1)
+                // Lines up with the observatory
+                .lineToLinearHeading(new Pose2d(-3, -50, Math.toRadians(269)))
+                // Outtakes the third sample
+                .waitSeconds(1)
                 .build();
         ;
 
+        // Waits for the start button to be pressed
         waitForStart();
+        //Follows the trajectory
         loop();
         drive.followTrajectorySequence(traj1);
     }

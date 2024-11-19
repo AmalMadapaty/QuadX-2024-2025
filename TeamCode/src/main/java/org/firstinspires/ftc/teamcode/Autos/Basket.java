@@ -14,58 +14,43 @@ public class Basket extends LinearOpMode {
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(90));
+        Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(270));
 
         drive.setPoseEstimate(myPose);
 
-        Trajectory traj1 = drive.trajectoryBuilder(myPose, false)
-                //.strafeLeft(30)
-                .lineToLinearHeading(new Pose2d(-35.5, -110, Math.toRadians(90)))
-                //.lineToConstantHeading(new Vector2d(-35.5, -30))
-                .build();
-;
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(myPose)
+                // Scores the preload
+                .strafeLeft(10)
+                // Returns to the original position
+                .strafeRight(11.5)
+                // Heads over to the first sample
+                .lineToLinearHeading(new Pose2d(-32, -110, Math.toRadians(270)))
+                // Lines up with the net zone
                 .turn(Math.toRadians(72))
-                .waitSeconds(1) // Waits 3 seconds
-                .build();
-
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end(), false)
-                        .strafeRight(45)
-                        .build();
-
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end(), false)
+                // Scores the first sample
                 .strafeLeft(45)
-                .build();
-
-        Trajectory traj5 = drive.trajectoryBuilder(traj4.end(), false)
-                .lineToLinearHeading(new Pose2d(-20, -110, Math.toRadians(180)))
-                .build();
-
-        Trajectory traj6 = drive.trajectoryBuilder(traj5.end(), false)
+                // Returns to the original position
                 .strafeRight(45)
-                .build();
-
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(traj6.end())
-                .strafeLeft(50)
-                .back(10)
+                // Lines up with the second sample
+                .lineToLinearHeading(new Pose2d(-20, -110, Math.toRadians(0)))
+                // Scores the second sample
+                .strafeLeft(45)
+                // Returns to the original position
                 .strafeRight(50)
+                // Lines up with the third sample
+                .forward(10)
+                // Scores the third sample
                 .strafeLeft(50)
+                // Returns to the original position and lines up for the park
+                .strafeRight(50)
+                // Parks
+                .back(35)
                 .build();
 
-        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(traj7.end())
-                .forward(35)
-                .build();
-
-
+        // Waits for the start button to be pressed
         waitForStart();
+        //Follows the trajectory
         loop();
-        drive.followTrajectory(traj1);
-        drive.followTrajectorySequence(traj2);
-        drive.followTrajectory(traj3);
-        drive.followTrajectory(traj4);
-        drive.followTrajectory(traj5);
-        drive.followTrajectory(traj6);
-        drive.followTrajectorySequence(traj7);
-        drive.followTrajectorySequence(traj8);
+        drive.followTrajectorySequence(traj1);
     }
 }

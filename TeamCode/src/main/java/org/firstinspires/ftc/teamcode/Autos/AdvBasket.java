@@ -15,29 +15,44 @@ public class AdvBasket extends LinearOpMode {
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(90));
+        Pose2d myPose = new Pose2d(-35.5, -61, Math.toRadians(270));
 
         drive.setPoseEstimate(myPose);
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(myPose)
-                .lineToLinearHeading(new Pose2d(-19.5, -71, Math.toRadians(40)))
+                //Lines up with the basket
+                .lineToLinearHeading(new Pose2d(-19.5, -71, Math.toRadians(230)))
+                //Scores the preload
                 .waitSeconds(2.25)
-                .lineToLinearHeading(new Pose2d(-25, -83, Math.toRadians(90)))
+                //Lines up with the first sample
+                .lineToLinearHeading(new Pose2d(-25, -83, Math.toRadians(270)))
+                //Intakes the first sample
                 .waitSeconds(1.5)
-                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(42)))
+                //Lines up with basket
+                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(232)))
+                //Scores the first sample
                 .waitSeconds(2.25)
-                .lineToLinearHeading(new Pose2d(-14.5, -83, Math.toRadians(93)))
+                //Lines up with the second sample
+                .lineToLinearHeading(new Pose2d(-14.5, -83, Math.toRadians(270)))
+                //Intakes the second sample
                 .waitSeconds(1.5)
-                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(42)))
+                //Lines up with basket
+                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(232)))
+                //Scores the second sample
                 .waitSeconds(2.25)
-                .lineToLinearHeading(new Pose2d(-13, -86, Math.toRadians(131)))
+                //Lines up with the third sample
+                .lineToLinearHeading(new Pose2d(-13, -86, Math.toRadians(311)))
+                //Intakes the third sample
                 .waitSeconds(1.5)
-                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(40)))
+                //Lines up with the basket
+                .lineToLinearHeading(new Pose2d(-19.25, -70.75, Math.toRadians(230)))
+                //Scores the third sample
                 .waitSeconds(2.25)
                 .build();
         ;
-
+        // Waits for the start button to be pressed
         waitForStart();
+        //Follows the trajectory
         loop();
         drive.followTrajectorySequence(traj1);
     }
