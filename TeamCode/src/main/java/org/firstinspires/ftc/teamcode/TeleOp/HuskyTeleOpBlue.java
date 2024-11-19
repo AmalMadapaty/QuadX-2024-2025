@@ -54,7 +54,7 @@ public class HuskyTeleOpBlue extends OpMode {
 
     //This checks if there is an object. If there is, return how many.
     //Mind you, this only checks for BLUE objects. TODO: DOES NOT WORK ON RED OR YELLOW YET.
-    int Num;
+    int Num; //This is the amount of blocks that the HuskyLens has found.
     public HuskyLens.Block BlueObjectDetection(){
         HuskyLens.Block[] BlockList = Husk.blocks(1);
         Num = BlockList.length;
@@ -66,11 +66,11 @@ public class HuskyTeleOpBlue extends OpMode {
 
     }
 
-    //This returns the X position of a detected object (only blue at the moment).
+    //This returns the X position of a detected object
     //For usage of the values, use Posi.
-    int Xpos;
-
-    public int RedObjectOrientation() {
+    int Xpos; //X Position of a block
+    int Ypos; //Y Position of a block
+    public int BlueObjectXOrientation() {
         Husk.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
         for (HuskyLens.Block b : Husk.blocks(1)) {
                 if (b.id == 1){
@@ -81,8 +81,20 @@ public class HuskyTeleOpBlue extends OpMode {
         return Xpos;
     }
 
+    public int BlueObjectYOrientation() {
+        Husk.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+        for (HuskyLens.Block b : Husk.blocks(1)) {
+            if (b.id == 1){
+                Xpos = BlueObjectDetection().y;
+            }
+
+        }
+        return Ypos;
+    }
+
     HuskyLens.Block Object;
-    int Posi;
+    int PosiX; // Recorded X position of a block
+    int PosiY; // Recorded Y position of a block
 
     @Override
     public void loop() {
@@ -107,27 +119,46 @@ public class HuskyTeleOpBlue extends OpMode {
                 telemetry.addData("Vision",0);
             }
 
-            Posi = RedObjectOrientation();
-            telemetry.addData("X Position",Posi);
+            PosiX = BlueObjectXOrientation();
+            PosiY = BlueObjectYOrientation();
+            telemetry.addData("X Position",PosiX);
+            telemetry.addData("Y Position",PosiY);
             updateTelemetry(telemetry);
 
             //TODO: THIS IS EXPERIMENTAL AND NEEDS TO BE TESTED/FIXED.
             //This function allows for alignment with detected objects. If there aren't any to align with, it attempts to find one.
             //NOTE - This might override all other Driver 1 functions temporarily. Whether or not this is bad or good is yet to be determined.
             if(gamepad1.b) {
-
-                if (Num >= 1) {
-                    //TODO: Check if the turns are proper. They may be skewed by other values. Delete this after.
-                        double error = 160 - Posi;
+                if(!gamepad1.a) {
+                    if (Num >= 1) {
+                        double error = 160 - PosiX;
                         double rotate = error * 0.004;
-                        telemetry.addData("Posi",Posi);
-                            flPower = rotate;
-                            frPower = -rotate;
-                            blPower = rotate;
-                            brPower = -rotate;
-                        Posi = RedObjectOrientation();
+                        telemetry.addData("Posi", PosiX);
+                        flPower = rotate;
+                        frPower = -rotate;
+                        blPower = rotate;
+                        brPower = -rotate;
+                        PosiX = BlueObjectXOrientation();
+                    }
                 }
             }
+
+            if(gamepad1.a){
+                if(!gamepad1.b){
+                    if(Num >= 1){
+                        double error = 120 - PosiY;
+                        double drive2 = error * 0.004;
+                        telemetry.addData("Posi", PosiY);
+                        flPower = drive2;
+                        frPower = drive2;
+                        blPower = drive2;
+                        brPower = drive2;
+                        PosiY = BlueObjectYOrientation();
+                    }
+                }
+            }
+
+
 
 
         telemetry.addData("flpower",flPower);
