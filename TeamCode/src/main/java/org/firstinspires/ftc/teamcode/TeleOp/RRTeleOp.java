@@ -5,29 +5,45 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Autos.drive.SampleMecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class RRTeleOp extends OpMode {
     private SampleMecanumDrive drive;
-    private DcMotor intake;
+    //private DcMotor intake;
 
     private Servo leftIn;
     private Servo rightIn;
     private Servo leftLink;
     private Servo rightLink;
+    private DcMotor leftLift;
+    private DcMotor rightLift;
 
     @Override
     public void init() {
         drive = new SampleMecanumDrive(hardwareMap);
-        hardwareMap.dcMotor.get("fl");
-        intake = hardwareMap.dcMotor.get("intake");
+        //hardwareMap.dcMotor.get("fl");
+        //intake = hardwareMap.dcMotor.get("intake");
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        intake = hardwareMap.dcMotor.get("intake");
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake = hardwareMap.dcMotor.get("intake");
+        leftLift = hardwareMap.dcMotor.get("leftLift");
+        rightLift = hardwareMap.dcMotor.get("rightLift");
+
+        leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLift.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //intake.setDirection(DcMotor.Direction.FORWARD);
+        //intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         leftIn = hardwareMap.servo.get("leftIn");
         rightIn = hardwareMap.servo.get("rightIn");
@@ -46,11 +62,23 @@ public class RRTeleOp extends OpMode {
         );
         drive.update();
 
+        if (gamepad2.dpad_up) {
+            leftLift.setPower(1);
+            rightLift.setPower(1);
+        } else if (gamepad2.dpad_down) {
+            leftLift.setPower(-1);
+            rightLift.setPower(-1);
+        } else {
+            leftLift.setPower(0);
+            rightLift.setPower(0);
+        }
+        /*
         if (gamepad2.right_trigger != 0) {
             intake.setPower(gamepad2.right_trigger);
         } else {
             intake.setPower(0);
         }
+        */
 
         double heading = drive.getPoseEstimate().getHeading();
         telemetry.addData("Heading", Math.toDegrees(heading));
@@ -82,6 +110,7 @@ public class RRTeleOp extends OpMode {
             telemetry.addData("rightIn position: ", rightIn.getPosition());
         }
 
+        /*
         if (gamepad2.left_trigger > 0.0) {
             intake.setPower(gamepad2.left_trigger);
         } else if (gamepad2.right_trigger > 0.0) {
@@ -89,5 +118,6 @@ public class RRTeleOp extends OpMode {
         } else {
             intake.setPower(gamepad2.right_trigger);
         }
+        */
     }
 }
