@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Autos.drive.SampleMecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -13,18 +14,18 @@ public class RRTeleOp extends OpMode {
     private SampleMecanumDrive drive;
     //private DcMotor intake;
 
-    private Servo leftIn;
-    private Servo rightIn;
+    private Servo wheelIn;
+    //private Servo leftIn;
+    private CRServo fourBar;
     private Servo leftLink;
+
     private Servo rightLink;
-    private DcMotor leftLift;
-    private DcMotor rightLift;
+    public DcMotor leftLift;
+    public DcMotor rightLift;
 
     @Override
     public void init() {
         drive = new SampleMecanumDrive(hardwareMap);
-        //hardwareMap.dcMotor.get("fl");
-        //intake = hardwareMap.dcMotor.get("intake");
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //intake = hardwareMap.dcMotor.get("intake");
@@ -45,8 +46,10 @@ public class RRTeleOp extends OpMode {
         //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        leftIn = hardwareMap.servo.get("leftIn");
-        rightIn = hardwareMap.servo.get("rightIn");
+        wheelIn = hardwareMap.servo.get("wheelIn");
+        //leftIn = hardwareMap.servo.get("leftIn");
+        //fourBar = hardwareMap.crservo.get("rightIn");
+        fourBar = hardwareMap.get(CRServo.class, "rightIn");
         leftLink = hardwareMap.servo.get("leftLink");
         rightLink = hardwareMap.servo.get("rightLink");
     }
@@ -55,19 +58,20 @@ public class RRTeleOp extends OpMode {
     public void loop() {
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        gamepad1.left_stick_y,
+                        -gamepad1.left_stick_y,
                         gamepad1.left_stick_x,
-                        gamepad1.right_stick_x
+                        -gamepad1.right_stick_x
                 )
         );
+
         drive.update();
 
         if (gamepad2.dpad_up) {
-            leftLift.setPower(1);
-            rightLift.setPower(1);
-        } else if (gamepad2.dpad_down) {
             leftLift.setPower(-1);
             rightLift.setPower(-1);
+        } else if (gamepad2.dpad_down) {
+            leftLift.setPower(1);
+            rightLift.setPower(1);
         } else {
             leftLift.setPower(0);
             rightLift.setPower(0);
@@ -84,30 +88,31 @@ public class RRTeleOp extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(heading));
         telemetry.update();
 
+        //double aiden = 0.0;
+
         if (gamepad2.a) {
-            leftLink.setPosition(0.6);
-            rightLink.setPosition(-0.6);
-            telemetry.addData("leftLink position: ", leftLink.getPosition());
-            telemetry.addData("rightLink position: ", rightLink.getPosition());
-        } else if (gamepad2.b) {
-            leftLink.setPosition(-1);
+            fourBar.setPower(-1);
+        } else if (gamepad2.b){
+            fourBar.setPower(1);
+        } else {
+            fourBar.setPower(0);
+        }
+
+        if (gamepad2.right_bumper) {
             rightLink.setPosition(1);
-            leftIn.setPosition(1);
-            rightIn.setPosition(1);
-            telemetry.addData("leftLink position: ", leftLink.getPosition());
-            telemetry.addData("rightLink position: ", rightLink.getPosition());
+        } else if (gamepad2.left_bumper) {
+            rightLink.setPosition(0);
         }
 
         if (gamepad2.x) {
-            leftIn.setPosition(1);
-            rightIn.setPosition(1);
-            telemetry.addData("leftIn position: ", leftIn.getPosition());
-            telemetry.addData("rightIn position: ", rightIn.getPosition());
+            wheelIn.setPosition(1);
+            telemetry.addData("wheelIn position: ", wheelIn.getPosition());
         } else if (gamepad2.y) {
-            leftIn.setPosition(0);
-            rightIn.setPosition(0);
-            telemetry.addData("leftIn position: ", leftIn.getPosition());
-            telemetry.addData("rightIn position: ", rightIn.getPosition());
+            wheelIn.setPosition(0.3);
+            telemetry.addData("wheelIn position: ", wheelIn.getPosition());
+        }
+        if (gamepad2.right_trigger > 0){
+            wheelIn.setPosition(0);
         }
 
         /*
