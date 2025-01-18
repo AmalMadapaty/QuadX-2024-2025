@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -16,7 +17,7 @@ public class TeleOp extends OpMode {
     private DcMotor fr;
     private DcMotor bl;
     private DcMotor br;
-    private BNO055IMU imu;
+    private Servo IntakeServoR;
 
     @Override
     public void init() {
@@ -24,12 +25,11 @@ public class TeleOp extends OpMode {
         fr = hardwareMap.dcMotor.get("fr");
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
+        IntakeServoR = hardwareMap.servo.get("IntakeR");
 
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imu.initialize(parameters);
 
         fl.setDirection(DcMotor.Direction.FORWARD);
         fr.setDirection(DcMotor.Direction.REVERSE);
@@ -53,17 +53,11 @@ public class TeleOp extends OpMode {
         float turn = -gamepad1.right_stick_x;
         float strafe = gamepad1.left_stick_x;
 
-
         double flPower = Range.clip(drive + turn - strafe, -1.0, 1.0);
         double frPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
         double blPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
         double brPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
 
-
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double heading = angles.firstAngle;
-        telemetry.addData("Heading", heading); // Display the heading
-        telemetry.update();
 
         if (gamepad1.right_trigger > 0.0) {
             flPower *= 0.5;
@@ -72,36 +66,33 @@ public class TeleOp extends OpMode {
             brPower *= 0.5;
         }
 
-        if (gamepad1.left_trigger > 0.0) {
+        if (gamepad1.left_bumper) {
             flPower *= 0.25;
             frPower *= 0.25;
             blPower *= 0.25;
             brPower *= 0.25;
         }
 
-        if (gamepad1.x)
-        {
-            while (heading != 0) {
-                double error = 0 - heading;
-                double turnPower = (error/180) * 0.8;
-                fl.setPower(turnPower);
-                bl.setPower(turnPower);
-                fr.setPower(-turnPower);
-                br.setPower(-turnPower);
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                heading = angles.firstAngle;
-                telemetry.addData("Heading", heading); // Display the heading
-                telemetry.update();
-            }
-            fl.setPower(0);
-            bl.setPower(0);
-            fr.setPower(0);
-            br.setPower(0);
+        if (gamepad2.left_bumper) {
+            flPower = 0.1;
+            frPower = 0.1;
+            blPower = 0.1;
+            brPower = 0.1;
         }
 
-        fl.setPower(flPower);
-        fr.setPower(frPower);
-        bl.setPower(blPower);
-        br.setPower(brPower);
+        if (gamepad1.y){
+            IntakeServoR.setPosition(0.0);
+        }
+
+        if(gamepad1.a){
+            IntakeServoR.setPosition(0.5);
+        }
+        
+
+        fl.setPower(0.1);
+        fr.setPower(0.1);
+        bl.setPower(0.1);
+        br.setPower(0.1);
+
     }
 }
